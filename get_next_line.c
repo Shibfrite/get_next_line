@@ -57,23 +57,32 @@ static int	read_buffer(t_buffer *buf, int fd)
 	return (1);
 }
 
-static char	*process_buffer(t_buffer *buf, char *old_line)
+static char     *process_buffer(t_buffer *buf, char *old_line)
 {
-	char	*nl_char;
-	char	*new_line;
-	size_t	chunk_len;
+    char    *nl_char;
+    char    *new_line;
+    size_t  chunk_len;
 
-	nl_char = ft_strchr(buf->current, '\n');
-	if (nl_char)
-		chunk_len = (size_t)(nl_char - buf->current + 1);
-	else
-		chunk_len = (size_t)(buf->buffer + buf->bytes_read - buf->current);
-	new_line = ft_strjoin(old_line, buf->current, chunk_len);
-	free(old_line);
-	if (!new_line)
-		return (0);
-	buf->current += chunk_len;
-	return (new_line);
+    nl_char = ft_strchr(buf->current, '\n');
+    if (nl_char)
+    {
+        chunk_len = (size_t)(nl_char - buf->current);
+        if (chunk_len == 0 && buf->current + 1 >= buf->buffer + buf->bytes_read)
+        {
+            // This is a newline at the end of the file, don't include it
+            buf->current++;
+            return old_line;
+        }
+        chunk_len++; // Include the newline for normal cases
+    }
+    else
+        chunk_len = (size_t)(buf->buffer + buf->bytes_read - buf->current);
+    new_line = ft_strjoin(old_line, buf->current, chunk_len);
+    free(old_line);
+    if (!new_line)
+        return (0);
+    buf->current += chunk_len;
+    return (new_line);
 }
 
 char	*get_next_line(int fd)
@@ -84,7 +93,7 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || fd >= MAX_FD || BUFFER_SIZE <= 0)
 		return (0);
-	if (read(fd, 0, 0))
+	if (read(fd, 0, 0) < 0)
 		buffers[fd] = (t_buffer){0};
 	buf = &buffers[fd];
 	line = 0;
@@ -101,12 +110,48 @@ char	*get_next_line(int fd)
 	}
 }
 
+/* If the above doesnt work:
+   char    *get_next_line(int fd)
+{
+    static t_buffer buffers[MAX_FD] = {0};
+    t_buffer        *buf;
+    char            *line;
+    int             read_result;
+
+    if (fd < 0 || fd >= MAX_FD || BUFFER_SIZE <= 0)
+        return (0);
+    if (read(fd, 0, 0) < 0)
+        buffers[fd] = (t_buffer){0};
+    buf = &buffers[fd];
+    line = 0;
+    while (1)
+    {
+        if (buf->current == 0 || buf->current >= buf->buffer + buf->bytes_read)
+        {
+            read_result = read_buffer(buf, fd);
+            if (read_result < 0)
+                return (0);  // Error
+            if (read_result == 0 && line)
+                return (line);  // EOF, return last line without newline
+            if (read_result == 0)
+                return (0);  // EOF, no more data
+        }
+        line = process_buffer(buf, line);
+        if (!line)
+            return (0);
+        if (ft_strchr(line, '\n'))
+            return (line);
+    }
+}
+ */
+
+
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include "get_next_line.h" // Assurez-vous d'inclure le bon header pour get_next_line
 
-#define FILENAME "txt" // Nom du fichier hardcodé
+#define FILENAME "test" // Nom du fichier hardcodé
 
 int main(void)
 {
@@ -120,7 +165,6 @@ int main(void)
         perror("Erreur lors de l'ouverture du fichier");
         return 1;
     }
-
     // Lire le fichier ligne par ligne
     while ((line = get_next_line(fd)) != NULL)
     {
