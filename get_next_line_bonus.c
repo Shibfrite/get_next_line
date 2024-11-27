@@ -6,7 +6,7 @@
 /*   By: makurek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:18:54 by makurek           #+#    #+#             */
-/*   Updated: 2024/11/17 14:14:37 by makurek          ###   ########.fr       */
+/*   Updated: 2024/11/27 17:49:53 by makurek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ static char	*process_buffer(t_buffer *buf, char *old_line)
 
 char	*get_next_line(int fd)
 {
-	static t_buffer	buffers[MAX_FD] = {0};
+	static t_buffer	buffers[MAX_FD];
 	t_buffer		*buf;
 	char			*line;
 
