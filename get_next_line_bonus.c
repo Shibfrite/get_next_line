@@ -6,11 +6,11 @@
 /*   By: makurek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:18:54 by makurek           #+#    #+#             */
-/*   Updated: 2024/11/27 17:49:53 by makurek          ###   ########.fr       */
+/*   Updated: 2024/11/30 17:50:17 by makurek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*ft_strchr(const char *s, int c)
 {
