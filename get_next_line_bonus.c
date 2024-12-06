@@ -6,7 +6,7 @@
 /*   By: makurek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:18:54 by makurek           #+#    #+#             */
-/*   Updated: 2024/11/30 17:50:17 by makurek          ###   ########.fr       */
+/*   Updated: 2024/12/06 19:05:04 by makurek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ char	*get_next_line(int fd)
 	t_buffer		*buf;
 	char			*line;
 
-	if (fd < 0 || fd >= MAX_FD || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd >= MAX_FD || BUFFER_ZERO)
 		return (0);
 	if (read(fd, 0, 0) < 0)
 		buffers[fd] = (t_buffer){0};
