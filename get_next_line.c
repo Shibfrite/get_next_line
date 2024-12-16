@@ -6,54 +6,18 @@
 /*   By: makurek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:18:54 by makurek           #+#    #+#             */
-/*   Updated: 2024/12/05 16:40:01 by makurek          ###   ########.fr       */
+/*   Updated: 2024/12/16 15:17:48 by makurek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-static char	*ft_strchr(const char *s, int c)
-{
-	while (*s)
-	{
-		if (*s == (char)c)
-			return ((char *)s);
-		s++;
-	}
-	if (!c)
-		return ((char *)s);
-	return (NULL);
-}
-
-static char	*ft_strjoin(char *s1, char *s2, size_t len2)
-{
-	size_t	len1;
-	char	*result;
-	char	*ptr;
-
-	len1 = 0;
-	while (s1 && s1[len1])
-		len1++;
-	result = malloc(len1 + len2 + 1);
-	if (!result)
-		return (0);
-	ptr = result;
-	while (s1 && *s1)
-		*ptr++ = *s1++;
-	while (len2--)
-		*ptr++ = *s2++;
-	*ptr = '\0';
-	return (result);
-}
 
 static int	read_buffer(t_buffer *buf, int fd)
 {
 	buf->bytes_read = read(fd, buf->buffer, BUFFER_SIZE);
 	buf->buffer[buf->bytes_read] = '\0';
 	if (buf->bytes_read < 0)
-		return (-1);
-	if (buf->bytes_read == 0)
-		return (0);
+		return (buf->bytes_read);
 	buf->current = buf->buffer;
 	return (1);
 }

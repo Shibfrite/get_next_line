@@ -6,7 +6,7 @@
 /*   By: makurek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:18:58 by makurek           #+#    #+#             */
-/*   Updated: 2024/12/05 16:05:09 by makurek          ###   ########.fr       */
+/*   Updated: 2024/12/11 12:24:03 by makurek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ typedef struct s_struct
 	int		bytes_read;
 }	t_buffer;
 
+char	*ft_strchr(const char *s, int c);
+char	*ft_strjoin(char *s1, char *s2, size_t len2);
 char	*get_next_line(int fd);
 
 #endif
