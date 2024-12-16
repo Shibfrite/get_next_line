@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: makurek <marvin@42.fr>                     +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/31 18:18:54 by makurek           #+#    #+#             */
-/*   Updated: 2024/12/05 16:40:01 by makurek          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   get_next_line.c									:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: makurek <marvin@42.fr>					 +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2024/10/31 18:18:54 by makurek		   #+#	#+#			 */
+/*   Updated: 2024/12/16 15:08:26 by makurek          ###   ########.fr       */
+/*																			*/
 /* ************************************************************************** */
 
 #include "get_next_line.h"
@@ -46,58 +46,60 @@ static char	*ft_strjoin(char *s1, char *s2, size_t len2)
 	return (result);
 }
 
-static int read_buffer(int fd, t_buffer *buffers)
+static int	read_buffer(int fd, t_buffer *buffers)
 {
-    t_buffer *buf = &buffers[fd];
+	t_buffer	*buf;
 
-    buf->bytes_read = read(fd, buf->buffer, BUFFER_SIZE);
-    if (buf->bytes_read <= 0)
-    {
-        // Reset the buffer completely
-        *buf = (t_buffer){0};
-        return (buf->bytes_read);
-    }
-    buf->buffer[buf->bytes_read] = '\0';
-    buf->current = buf->buffer;
-    return (1);
+	buf = &buffers[fd];
+	buf->bytes_read = read(fd, buf->buffer, BUFFER_SIZE);
+	if (buf->bytes_read <= 0)
+	{
+		buffers[fd] = (t_buffer){0};
+		return (buf->bytes_read);
+	}
+	buf->buffer[buf->bytes_read] = '\0';
+	buf->current = buf->buffer;
+	return (1);
 }
 
-static char *process_buffer(t_buffer *buf, char *old_line)
+static char	*process_buffer(t_buffer *buf, char *old_line)
 {
-    char *nl_char;
-    char *new_line;
-    size_t chunk_len;
+	char	*nl_char;
+	char	*new_line;
+	size_t	chunk_len;
 
-    nl_char = ft_strchr(buf->current, '\n');
-    if (nl_char)
-        chunk_len = (size_t)(nl_char - buf->current + 1);
-    else
-        chunk_len = (size_t)(buf->buffer + buf->bytes_read - buf->current);
-    new_line = ft_strjoin(old_line, buf->current, chunk_len);
-    free(old_line);
-    if (!new_line)
-        return (0);
-    buf->current += chunk_len;
-    return (new_line);
+	nl_char = ft_strchr(buf->current, '\n');
+	if (nl_char)
+		chunk_len = (size_t)(nl_char - buf->current + 1);
+	else
+		chunk_len = (size_t)(buf->buffer + buf->bytes_read - buf->current);
+	new_line = ft_strjoin(old_line, buf->current, chunk_len);
+	free(old_line);
+	if (!new_line)
+		return (0);
+	buf->current += chunk_len;
+	return (new_line);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-    static t_buffer buffers[MAX_FD];
-    char *line;
+	static t_buffer	buffers[MAX_FD];
+	char			*line;
 
-    if (fd < 0 || fd >= MAX_FD)
-        return (0);
-    line = 0;
-    while (1)
-    {
-        if (buffers[fd].current == 0 || buffers[fd].current >= buffers[fd].buffer + buffers[fd].bytes_read)
-            if (read_buffer(fd, buffers) <= 0)
-                return (NULL); // Return NULL if read fails, or the last line if EOF
-        line = process_buffer(&buffers[fd], line);
-        if (!line)
-            return (0);
-        if (ft_strchr(line, '\n'))
-            return (line);
-    }
+	if (fd < 0 || fd >= MAX_FD)
+		return (0);
+	line = 0;
+	while (1)
+	{
+		if (buffers[fd].current == 0
+			|| buffers[fd].current >= buffers[fd].buffer
+			+ buffers[fd].bytes_read)
+			if (read_buffer(fd, buffers) <= 0)
+				return (NULL);
+		line = process_buffer(&buffers[fd], line);
+		if (!line)
+			return (0);
+		if (ft_strchr(line, '\n'))
+			return (line);
+	}
 }
