@@ -16,29 +16,19 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
-# include <stdio.h>
 # include <fcntl.h>
 
-# ifndef OPEN_MAX
-#  define OPEN_MAX 4096
+# ifndef MAX_FD 
+#  define MAX_FD 4096
 # endif
-# define MAX_FD OPEN_MAX
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 2048
 # endif
 
-# if BUFFER_SIZE < 1
-#  define BUFFER_ZERO 1
-#  undef BUFFER_SIZE
-#  define BUFFER_SIZE 1
-# else
-#  define BUFFER_ZERO 0
-# endif
-
 typedef struct s_struct
 {
-	char	buffer[BUFFER_SIZE];
+	char	buffer[BUFFER_SIZE + 1];
 	char	*current;
 	int		bytes_read;
 }	t_buffer;
