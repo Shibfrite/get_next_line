@@ -1,30 +1,41 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: makurek <marvin@42.fr>                     +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/31 18:18:54 by makurek           #+#    #+#             */
-/*   Updated: 2024/12/11 12:31:31 by makurek          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   get_next_line.c									:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: makurek <marvin@42.fr>					 +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2024/10/31 18:18:54 by makurek		   #+#	#+#			 */
+/*   Updated: 2024/12/16 20:41:11 by makurek          ###   ########.fr       */
+/*																			*/
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "get_next_line.h"
 
-static int	read_buffer(t_buffer *buf, int fd)
+int	read_buffer(t_buffer *buf, int fd, char **line)
 {
-	buf->bytes_read = read(fd, buf->buffer, BUFFER_SIZE);
-	buf->buffer[buf->bytes_read] = '\0';
-	if (buf->bytes_read < 0)
-		return (-1);
-	if (buf->bytes_read == 0)
-		return (0);
-	buf->current = buf->buffer;
+	int	read_result;
+
+	if (!buf->current || buf->current >= buf->buffer + buf->bytes_read)
+	{
+		buf->bytes_read = read(fd, buf->buffer, BUFFER_SIZE);
+		buf->buffer[buf->bytes_read] = '\0';
+		if (buf->bytes_read <= 0)
+		{
+			read_result = buf->bytes_read;
+			if (read_result < 0)
+			{
+				free(*line);
+				*buf = (t_buffer){0};
+			}
+			return (read_result);
+		}
+		buf->current = buf->buffer;
+	}
 	return (1);
 }
 
-static char	*process_buffer(t_buffer *buf, char *old_line)
+char	*process_buffer(t_buffer *buf, char *old_line)
 {
 	char	*nl_char;
 	char	*new_line;
@@ -48,18 +59,19 @@ char	*get_next_line(int fd)
 	static t_buffer	buffers[MAX_FD];
 	t_buffer		*buf;
 	char			*line;
+	int				read_result;
 
-	if (fd < 0 || fd >= MAX_FD || BUFFER_ZERO)
+	if (fd < 0 || fd >= MAX_FD)
 		return (0);
-	if (read(fd, 0, 0) < 0)
-		buffers[fd] = (t_buffer){0};
 	buf = &buffers[fd];
 	line = 0;
 	while (1)
 	{
-		if (buf->current == 0 || buf->current >= buf->buffer + buf->bytes_read)
-			if (read_buffer(buf, fd) <= 0)
-				return (line);
+		read_result = read_buffer(buf, fd, &line);
+		if (read_result < 0)
+			return (NULL);
+		else if (!read_result)
+			return (line);
 		line = process_buffer(buf, line);
 		if (!line)
 			return (0);
