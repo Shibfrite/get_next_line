@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: makurek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 18:18:58 by makurek           #+#    #+#             */
-/*   Updated: 2024/12/16 20:43:24 by makurek          ###   ########.fr       */
+/*   Updated: 2024/12/20 16:54:39 by makurek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
-# include <stdio.h>
-# include <fcntl.h>
+//# include <stdio.h>
+//# include <fcntl.h>
 
 # ifndef MAX_FD
 #  define MAX_FD 4096

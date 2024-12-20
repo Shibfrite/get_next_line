@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*																			*/
 /*														:::	  ::::::::   */
-/*   get_next_line.c									:+:	  :+:	:+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*													+:+ +:+		 +:+	 */
 /*   By: makurek <marvin@42.fr>					 +#+  +:+	   +#+		*/
 /*												+#+#+#+#+#+   +#+		   */
 /*   Created: 2024/10/31 18:18:54 by makurek		   #+#	#+#			 */
-/*   Updated: 2024/12/16 20:41:11 by makurek          ###   ########.fr       */
+/*   Updated: 2024/12/20 16:54:06 by makurek          ###   ########.fr       */
 /*																			*/
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	read_buffer(t_buffer *buf, int fd, char **line)
+static int	read_buffer(t_buffer *buf, int fd, char **line)
 {
 	int	read_result;
 
@@ -26,7 +26,9 @@ int	read_buffer(t_buffer *buf, int fd, char **line)
 			if (read_result < 0)
 			{
 				free(*line);
-				*buf = (t_buffer){0};
+				buf->buffer[0] = '\0';
+				buf->current = NULL;
+				buf->bytes_read = 0;
 			}
 			return (read_result);
 		}
@@ -35,7 +37,7 @@ int	read_buffer(t_buffer *buf, int fd, char **line)
 	return (1);
 }
 
-char	*process_buffer(t_buffer *buf, char *old_line)
+static char	*process_buffer(t_buffer *buf, char *old_line)
 {
 	char	*nl_char;
 	char	*new_line;
